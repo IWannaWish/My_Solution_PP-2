@@ -20,27 +20,20 @@ public class UserDaoHibernateImpl implements UserDao {
                 " first_name VARCHAR(255) NOT NULL," +
                 " last_name VARCHAR(255) NOT NULL," +
                 " age TINYINT NOT NULL);";
-        try (Session session = Util.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            session.createSQLQuery(sql).executeUpdate();
-            transaction.commit();
-            System.out.println("Create table!");
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-        }
+        makeSQLQuery(sql);
     }
 
     @Override
     public void dropUsersTable() {
         String sql = "DROP TABLE IF EXISTS User";
+        makeSQLQuery(sql);
+    }
+
+    private void makeSQLQuery(String sql) {
         try (Session session = Util.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             session.createSQLQuery(sql).executeUpdate();
             transaction.commit();
-            System.out.println("Table is drop!");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -55,7 +48,6 @@ public class UserDaoHibernateImpl implements UserDao {
             transaction = session.beginTransaction();
             session.save(new User(name, lastName, age));
             transaction.commit();
-            System.out.println("user " + name + " save");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -73,7 +65,6 @@ public class UserDaoHibernateImpl implements UserDao {
                     .setParameter("id", id)
                     .executeUpdate();
             transaction.commit();
-            System.out.println("User with id " + id + " removed");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
