@@ -1,12 +1,13 @@
 package jm.task.core.jdbc;
 
-import jm.task.core.jdbc.dao.UserDaoHibernateImpl;
 import jm.task.core.jdbc.service.UserServiceImpl;
 
+import java.util.List;
+
 public class Main {
+
     public static void main(String[] args) {
-        // реализуйте алгоритм здесь
-        UserDaoHibernateImpl service = new UserDaoHibernateImpl();
+        UserServiceImpl service = new UserServiceImpl();
 
         service.createUsersTable();
 
@@ -15,10 +16,7 @@ public class Main {
         service.saveUser("Pavel", "Sun", (byte) 17);
         service.saveUser("Victory", "Pahomova", (byte) 19);
 
-        System.out.println(service.getAllUsers());
-        service.removeUserById(2);
-        System.out.println(service.getAllUsers());
+        service.cleanUsersTable();
         service.dropUsersTable();
-
     }
 }

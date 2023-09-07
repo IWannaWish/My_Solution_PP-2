@@ -16,22 +16,36 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS users (id INT PRIMARY KEY AUTO_INCREMENT," +
-                " name VARCHAR(255) NOT NULL," +
-                " lastName VARCHAR(255) NOT NULL," +
+        String sql = "CREATE TABLE IF NOT EXISTS User (id INT PRIMARY KEY AUTO_INCREMENT," +
+                " first_name VARCHAR(255) NOT NULL," +
+                " last_name VARCHAR(255) NOT NULL," +
                 " age TINYINT NOT NULL);";
         try (Session session = Util.getSessionFactory().openSession()) {
-            session.createSQLQuery(sql);
+            transaction = session.beginTransaction();
+            session.createSQLQuery(sql).executeUpdate();
+            transaction.commit();
             System.out.println("Create table!");
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
         }
     }
 
     @Override
     public void dropUsersTable() {
-        String sql = "DROP TABLE users";
+        String sql = "DROP TABLE IF EXISTS User";
         try (Session session = Util.getSessionFactory().openSession()) {
-            session.createSQLQuery(sql);
+            transaction = session.beginTransaction();
+            session.createSQLQuery(sql).executeUpdate();
+            transaction.commit();
             System.out.println("Table is drop!");
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
         }
     }
 
@@ -73,7 +87,7 @@ public class UserDaoHibernateImpl implements UserDao {
     public List<User> getAllUsers() {
         List<User> result;
         try (Session session = Util.getSessionFactory().openSession()) {
-            result = session.createQuery("FROM User").getResultList();
+            result = session.createQuery("FROM User", User.class).list();
         }
         return result;
     }
@@ -91,5 +105,4 @@ public class UserDaoHibernateImpl implements UserDao {
             e.printStackTrace();
         }
     }
-
 }
